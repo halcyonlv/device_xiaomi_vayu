@@ -10,6 +10,9 @@ TARGET_HAS_IR := true
 # Inherit from sm8150-common
 $(call inherit-product, device/xiaomi/sm8150-common/msmnile.mk)
 
+# Inherit from MIUI Camera
+$(call inherit-product-if-exists, vendor/xiaomi/miuicamera-vayu/device.mk)
+
 # AAPT
 PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
@@ -26,6 +29,10 @@ TARGET_SCREEN_WIDTH := 1080
 PRODUCT_PACKAGES += \
     libpiex_shim
 
+# Camera
+PRODUCT_PACKAGES += \
+    fastbootd
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/camera/camera_cnf.txt:$(TARGET_COPY_OUT_VENDOR)/etc/camera/camera_cnf.txt
 
@@ -39,10 +46,14 @@ $(call soong_config_set,xiaomi_msmnile,variant_lib,//$(LOCAL_PATH):libvariant_xi
 
 # Overlays
 PRODUCT_PACKAGES += \
-    ApertureOverlayDevice \
     FrameworkResOverlayDevice \
     SettingsOverlayDevice \
     SystemUIOverlayDevice
+
+ifeq ($(wildcard vendor/xiaomi/miuicamera-vayu/device.mk),)
+    PRODUCT_PACKAGES += \
+        ApertureOverlayDevice
+endif
 
 # QDCM
 PRODUCT_COPY_FILES += \
